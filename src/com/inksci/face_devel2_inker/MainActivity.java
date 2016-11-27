@@ -32,6 +32,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;  
 import org.apache.http.protocol.HTTP;  
 import org.apache.http.util.EntityUtils;  
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
  
 import android.app.Activity;  
 import android.os.Bundle;  
@@ -60,6 +64,26 @@ public class MainActivity extends ActionBarActivity {
                    //3.处理消息 运行在主线程
             	   String txt_data=(String)msg.obj;
             	   editText.setText(txt_data);
+            	   // String -> JSON -> display it
+			JSONObject jsonObject;
+			try {
+				editText.setText("...");
+				jsonObject = new JSONObject(txt_data);
+				JSONArray jsonArray = jsonObject.getJSONArray("faces"); 
+				JSONObject jsonObject2 = (JSONObject)jsonArray.opt(0); 
+				String face_token=jsonObject2.getString("face_token");
+				JSONObject attributes = jsonObject2.getJSONObject("attributes");
+				String gender = attributes.getJSONObject("gender").getString("value");
+				String age = attributes.getJSONObject("age").getString("value");
+				editText.setText("gender: "+gender+", age: "+age+", face_token: "+face_token);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+                   
+            	      	   
+            	   
                    System.out.println("76799679");
                    break;
                case EXCEPTION:
